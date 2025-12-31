@@ -1,5 +1,6 @@
 import os
 import hashlib
+import zstandard as zstd
 
 DING_DIR = ".ding"
 
@@ -66,5 +67,7 @@ def hash_objects(args):
     oid = hashlib.sha256(content).hexdigest()
     print(oid)
     object_file_path = os.path.join(objects_path, oid)
+    cctx = zstd.ZstdCompressor(level=3)
+    compressed = cctx.compress(content)
     with open(object_file_path, "wb") as f:
-        f.write(content)
+        f.write(compressed)
